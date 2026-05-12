@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>REVlonly</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#09090f;
+    --bg2:#11111b;
+    --card:rgba(255,255,255,.05);
+    --border:rgba(255,255,255,.08);
+    --text:#fff;
+    --muted:#9ca3af;
+    --purple:#8b5cf6;
+    --purple2:#a855f7;
+    --danger:#ef4444;
+    --shadow:0 10px 40px rgba(139,92,246,.25);
+}
+
+body{
+    font-family:"Inter",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    height:100vh;
+    overflow:hidden;
+}
+
+/* BACKGROUND */
+
+.bg{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+    background:
+    radial-gradient(circle at top left, rgba(139,92,246,.25), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(168,85,247,.18), transparent 35%),
+    linear-gradient(to bottom, #09090f, #0f0f18);
+}
+
+.noise{
+    position:absolute;
+    inset:0;
+    opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23fff' fill-opacity='1'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* HEADER */
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(10,10,15,.75);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--border);
+    z-index:100;
+}
+
+.header-inner{
+    width:100%;
+    max-width:1200px;
+    padding:0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.logo-icon{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:var(--shadow);
+}
+
+.logo-text h1{
+    font-size:22px;
+    font-weight:800;
+}
+
+.logo-text p{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.back-btn{
+    text-decoration:none;
+    color:#fff;
+    background:var(--card);
+    border:1px solid var(--border);
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.25s;
+}
+
+.back-btn:hover{
+    background:rgba(255,255,255,.08);
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.action-btn{
+    border:none;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.25s;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.action-btn:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.08);
+}
+
+.delete-btn{
+    background:rgba(239,68,68,.12);
+    border:1px solid rgba(239,68,68,.3);
+}
+
+.delete-btn:hover{
+    background:rgba(239,68,68,.2);
+}
+
+/* MAIN */
+
+.main{
+    width:100%;
+    max-width:1000px;
+    margin:90px auto 0;
+    height:calc(100vh - 90px);
+    display:flex;
+    flex-direction:column;
+    padding:20px;
+}
+
+/* CHAT AREA */
+
+.chat-area{
+    flex:1;
+    overflow-y:auto;
+    padding-right:6px;
+    scroll-behavior:smooth;
+}
+
+.chat-area::-webkit-scrollbar{
+    width:6px;
+}
+
+.chat-area::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.15);
+    border-radius:20px;
+}
+
+.messages{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    padding-bottom:20px;
+}
+
+/* MESSAGE */
+
+.message{
+    display:flex;
+    gap:14px;
+    animation:fadeUp .3s ease;
+}
+
+.message.user{
+    justify-content:flex-end;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:700;
+}
+
+.ai .avatar{
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+}
+
+.user .avatar{
+    background:#1f2937;
+}
+
+.message-box{
+    max-width:75%;
+    padding:16px 18px;
+    border-radius:20px;
+    line-height:1.7;
+    font-size:15px;
+    word-wrap:break-word;
+}
+
+.ai .message-box{
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+}
+
+.user .message-box{
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+}
+
+.message-box pre{
+    background:#050505;
+    padding:14px;
+    border-radius:12px;
+    overflow:auto;
+    margin-top:12px;
+}
+
+.message-box code{
+    font-family:monospace;
+}
+
+.time{
+    margin-top:10px;
+    font-size:12px;
+    color:rgba(255,255,255,.5);
+}
+
+/* INPUT */
+
+.input-wrapper{
+    padding-top:16px;
+}
+
+.input-container{
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:12px;
+    backdrop-filter:blur(20px);
+}
+
+textarea{
+    flex:1;
+    background:transparent;
+    border:none;
+    resize:none;
+    outline:none;
+    color:#fff;
+    font-size:15px;
+    max-height:180px;
+    min-height:24px;
+    font-family:"Inter",sans-serif;
+}
+
+textarea::placeholder{
+    color:rgba(255,255,255,.4);
+}
+
+.send-btn{
+    width:50px;
+    height:50px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg,var(--purple),var(--purple2));
+    color:#fff;
+    cursor:pointer;
+    font-size:18px;
+    flex-shrink:0;
+    transition:.25s;
+    box-shadow:var(--shadow);
+}
+
+.send-btn:hover{
+    transform:scale(1.06);
+}
+
+/* TYPING */
+
+.typing{
+    display:none;
+    align-items:center;
+    gap:14px;
+}
+
+.typing.active{
+    display:flex;
+}
+
+.typing-box{
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+    padding:16px;
+    border-radius:18px;
+    display:flex;
+    gap:6px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#fff;
+    animation:bounce 1s infinite;
+}
+
+.dot:nth-child(2){
+    animation-delay:.15s;
+}
+
+.dot:nth-child(3){
+    animation-delay:.3s;
+}
+
+/* POPUP */
+
+.popup-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    backdrop-filter:blur(8px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    animation:fade .2s ease;
+}
+
+.popup-overlay.active{
+    display:flex;
+}
+
+.popup{
+    width:90%;
+    max-width:400px;
+    background:#11111b;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:28px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.45);
+    animation:popupUp .25s ease;
+}
+
+.popup-icon{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    background:rgba(239,68,68,.15);
+    color:#ef4444;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    margin-bottom:20px;
+}
+
+.popup h2{
+    font-size:24px;
+    margin-bottom:10px;
+}
+
+.popup p{
+    color:var(--muted);
+    line-height:1.7;
+    margin-bottom:24px;
+}
+
+.popup-buttons{
+    display:flex;
+    gap:12px;
+}
+
+.popup-buttons button{
+    flex:1;
+    border:none;
+    padding:14px;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.25s;
+}
+
+.cancel-btn{
+    background:rgba(255,255,255,.06);
+    color:#fff;
+}
+
+.confirm-btn{
+    background:#ef4444;
+    color:#fff;
+}
+
+.cancel-btn:hover,
+.confirm-btn:hover{
+    transform:translateY(-2px);
+}
+
+@keyframes popupUp{
+    from{
+        opacity:0;
+        transform:scale(.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+@keyframes fade{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+@keyframes bounce{
+    0%,80%,100%{
+        transform:translateY(0);
+        opacity:.5;
+    }
+    40%{
+        transform:translateY(-7px);
+        opacity:1;
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:768px){
+
+    .header{
+        height:72px;
+    }
+
+    .main{
+        margin-top:80px;
+        padding:14px;
+    }
+
+    .logo-text p{
+        display:none;
+    }
+
+    .message-box{
+        max-width:88%;
+    }
+
+    .header-actions{
+        gap:8px;
+    }
+
+    .action-btn span{
+        display:none;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+    <div class="noise"></div>
+</div>
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="header-left">
+
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div class="logo-text">
+                    <h1>REVl AI Assistant</h1>
+                    <p>AI chat modern. Karena manusia suka nanya jam 2 pagi.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="header-actions">
+
+            <button class="action-btn" id="newChatBtn">
+                <i class="fa-solid fa-plus"></i>
+                <span>Chat Baru</span>
+            </button>
+
+            <button class="action-btn delete-btn" id="deleteChatBtn">
+                <i class="fa-solid fa-trash"></i>
+                <span>Hapus</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+<main class="main">
+
+    <div class="chat-area" id="chatArea">
+
+        <div class="messages" id="messages">
+
+            <div class="message ai">
+                <div class="avatar">🤖</div>
+
+                <div class="message-box">
+
+Halo. Gw REVl AI Assistant.
+
+Bisa bantu:
+- pertanyaan umum
+- coding
+- debugging
+- web development
+- game
+- ide bisnis
+- dan problem manusia lainnya yang mysteriously selalu urgent.
+
+<div class="time" id="welcomeTime"></div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="typing" id="typing">
+
+            <div class="avatar" style="background:linear-gradient(135deg,var(--purple),var(--purple2));">
+                🤖
+            </div>
+
+            <div class="typing-box">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="input-wrapper">
+
+        <div class="input-container">
+
+            <textarea
+                id="messageInput"
+                placeholder="Tanya apa aja..."
+                rows="1"
+            ></textarea>
+
+            <button class="send-btn" id="sendBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- POPUP -->
+
+<div class="popup-overlay" id="popupOverlay">
+
+    <div class="popup">
+
+        <div class="popup-icon">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+
+        <h2>Hapus Semua Chat?</h2>
+
+        <p>
+            Semua percakapan akan dihapus permanen dari local storage browser.
+            Seperti hubungan lu dan dia. Yang hilang begitu saja.
+        </p>
+
+        <div class="popup-buttons">
+
+            <button class="cancel-btn" id="cancelDelete">
+                Batal
+            </button>
+
+            <button class="confirm-btn" id="confirmDelete">
+                Hapus
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const messages = document.getElementById("messages");
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const chatArea = document.getElementById("chatArea");
+const typing = document.getElementById("typing");
+
+const popupOverlay = document.getElementById("popupOverlay");
+const deleteChatBtn = document.getElementById("deleteChatBtn");
+const cancelDelete = document.getElementById("cancelDelete");
+const confirmDelete = document.getElementById("confirmDelete");
+const newChatBtn = document.getElementById("newChatBtn");
+
+document.getElementById("welcomeTime").innerText = getTime();
+
+input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = input.scrollHeight + "px";
+});
+
+input.addEventListener("keydown", (e) => {
+
+    if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+    }
+
+});
+
+sendBtn.addEventListener("click", sendMessage);
+
+function getTime(){
+
+    return new Date().toLocaleTimeString("id-ID",{
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+
+}
+
+function addMessage(content,sender){
+
+    const msg = document.createElement("div");
+
+    msg.className = `message ${sender}`;
+
+    msg.innerHTML = `
+    
+        ${
+            sender === "ai"
+            ?
+            `<div class="avatar">🤖</div>`
+            :
+            ``
+        }
+
+        <div class="message-box">
+            ${marked.parse(content)}
+            <div class="time">${getTime()}</div>
+        </div>
+
+        ${
+            sender === "user"
+            ?
+            `<div class="avatar">👤</div>`
+            :
+            ``
+        }
+
+    `;
+
+    messages.appendChild(msg);
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    saveChat();
+
+}
+
+function showTyping(show){
+
+    if(show){
+        typing.classList.add("active");
+    }else{
+        typing.classList.remove("active");
+    }
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+}
+
+async function sendMessage(){
+
+    const text = input.value.trim();
+
+    if(!text) return;
+
+    addMessage(text,"user");
+
+    input.value = "";
+    input.style.height = "24px";
+
+    showTyping(true);
+
+    try{
+
+        const response = await fetch("http://localhost:3000/chat",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                message:text
+            })
+
+        });
+
+        const data = await response.json();
+
+        showTyping(false);
+
+        addMessage(
+            data.reply || "AI lagi blank. Mungkin ikut capek menghadapi internet.",
+            "ai"
+        );
+
+    }catch(err){
+
+        showTyping(false);
+
+        addMessage(`
+### Connection Error
+
+Frontend berhasil jalan.
+
+Tapi backend AI lu belum connect.
+
+Cek:
+- server.js
+- node server.js
+- port 3000
+- API key
+
+Karena sekarang browser lu lagi ngomong ke kehampaan digital.
+        `,"ai");
+
+        console.error(err);
+
+    }
+
+}
+
+/* SAVE CHAT */
+
+function saveChat(){
+
+    localStorage.setItem(
+        "revl_chat",
+        messages.innerHTML
+    );
+
+}
+
+/* LOAD CHAT */
+
+window.addEventListener("load",()=>{
+
+    const saved = localStorage.getItem("revl_chat");
+
+    if(saved){
+        messages.innerHTML = saved;
+    }
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+});
+
+/* NEW CHAT */
+
+newChatBtn.addEventListener("click",()=>{
+
+    messages.innerHTML = `
+    
+    <div class="message ai">
+        <div class="avatar">🤖</div>
+
+        <div class="message-box">
+
+Chat baru dimulai.
+
+Manusia suka reset percakapan berharap hubungannya ikut ke reset. cie yang masih berharap.
+
+<div class="time">${getTime()}</div>
+
+        </div>
+    </div>
+
+    `;
+
+    saveChat();
+
+});
+
+/* DELETE POPUP */
+
+deleteChatBtn.addEventListener("click",()=>{
+
+    popupOverlay.classList.add("active");
+
+});
+
+cancelDelete.addEventListener("click",()=>{
+
+    popupOverlay.classList.remove("active");
+
+});
+
+popupOverlay.addEventListener("click",(e)=>{
+
+    if(e.target === popupOverlay){
+        popupOverlay.classList.remove("active");
+    }
+
+});
+
+/* DELETE ALL */
+
+confirmDelete.addEventListener("click",()=>{
+
+    localStorage.removeItem("revl_chat");
+
+    messages.innerHTML = `
+    
+    <div class="message ai">
+        <div class="avatar">🤖</div>
+
+        <div class="message-box">
+
+Semua chat berhasil dihapus.
+
+Tenang. Browser lu sekarang bersih dari jejak percakapan random tengah malam.
+
+<div class="time">${getTime()}</div>
+
+        </div>
+    </div>
+
+    `;
+
+    popupOverlay.classList.remove("active");
+
+    saveChat();
+
+});
+
+</script>
+
+</body>
+</html>
