@@ -3,24 +3,44 @@ import cors from "cors";
 
 const app = express();
 
+/*
+========================================
+CONFIG
+========================================
+*/
+
+const PORT = process.env.PORT || 3000;
+
+/*
+========================================
+MIDDLEWARE
+========================================
+*/
+
 app.use(cors());
+
 app.use(express.json());
 
 /*
 ========================================
-TEST
+ROOT
 ========================================
 */
 
 app.get("/", (req, res) => {
 
-    res.send("REVl AI Backend Running");
+    res.json({
+
+        status: "success",
+        message: "REVl AI Backend Running"
+
+    });
 
 });
 
 /*
 ========================================
-CHAT
+CHAT API
 ========================================
 */
 
@@ -30,13 +50,45 @@ app.post("/chat", async (req, res) => {
 
         const userMessage = req.body.message;
 
-        if (!userMessage) {
+        /*
+        ========================================
+        VALIDATION
+        ========================================
+        */
+
+        if (!userMessage || userMessage.trim() === "") {
 
             return res.status(400).json({
+
                 reply: "Pesan kosong."
+
             });
 
         }
+
+        /*
+        ========================================
+        AI PROMPT
+        ========================================
+        */
+
+        const prompt = `
+
+Kamu adalah REVl AI Assistant.
+
+Gaya bicara:
+- santai
+- modern
+- natural
+- singkat tapi jelas
+- seperti manusia normal
+
+Jawab pertanyaan user dengan baik.
+
+Pertanyaan user:
+${userMessage}
+
+`;
 
         /*
         ========================================
@@ -46,25 +98,39 @@ app.post("/chat", async (req, res) => {
 
         const response = await fetch(
 
-            `https://text.pollinations.ai/${encodeURIComponent(`
-            
-            Kamu adalah REVl AI Assistant.
-
-            Jawab dengan:
-            - santai
-            - natural
-            - modern
-            - jelas
-            - seperti manusia normal
-
-            Pertanyaan user:
-            ${userMessage}
-            
-            `)}`
+            `https://text.pollinations.ai/${encodeURIComponent(prompt)}`
 
         );
 
+        /*
+        ========================================
+        CHECK RESPONSE
+        ========================================
+        */
+
+        if (!response.ok) {
+
+            return res.status(500).json({
+
+                reply: "AI gagal merespon."
+
+            });
+
+        }
+
+        /*
+        ========================================
+        GET AI TEXT
+        ========================================
+        */
+
         const aiReply = await response.text();
+
+        /*
+        ========================================
+        SEND RESPONSE
+        ========================================
+        */
 
         res.json({
 
@@ -74,7 +140,7 @@ app.post("/chat", async (req, res) => {
 
     } catch (err) {
 
-        console.log(err);
+        console.error("SERVER ERROR:", err);
 
         res.status(500).json({
 
@@ -88,12 +154,28 @@ app.post("/chat", async (req, res) => {
 
 /*
 ========================================
+404
+========================================
+*/
+
+app.use((req, res) => {
+
+    res.status(404).json({
+
+        error: "Route tidak ditemukan."
+
+    });
+
+});
+
+/*
+========================================
 START SERVER
 ========================================
 */
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
 
-    console.log("AI server running on http://localhost:3000");
+    console.log(`REVl AI Backend running on port ${PORT}`);
 
 });
