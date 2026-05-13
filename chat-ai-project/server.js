@@ -18,24 +18,30 @@ MIDDLEWARE
 */
 
 app.use(cors());
-app.use(express.json());
+
+app.use(express.json({
+    limit: "1mb"
+}));
 
 /*
 ========================================
-ROOT
+ROOT ROUTE
 ========================================
 */
 
 app.get("/", (req, res) => {
-    res.json({
-        status: "success",
+
+    res.status(200).json({
+        success: true,
         message: "REVl AI Backend Running"
     });
+
 });
 
 /*
 ========================================
-CHAT API  —  endpoint: POST /chat
+CHAT API
+POST /chat
 ========================================
 */
 
@@ -43,54 +49,130 @@ app.post("/chat", async (req, res) => {
 
     try {
 
-        const userMessage = req.body.message;
+        const { message } = req.body;
 
-        /*  VALIDATION  */
-        if (!userMessage || userMessage.trim() === "") {
-            return res.status(400).json({ reply: "Pesan kosong." });
+        /*
+        ================================
+        VALIDATION
+        ================================
+        */
+
+        if (!message || typeof message !== "string") {
+
+            return res.status(400).json({
+                success: false,
+                reply: "Pesan tidak valid."
+            });
+
         }
 
-        /*  AI PROMPT  */
-        const prompt = `Kamu adalah REVl AI Assistant.
+        const cleanMessage = message.trim();
 
-Gaya bicara:
-- santai, modern, natural
-- singkat tapi jelas
-- seperti manusia normal yang cerdas
+        if (cleanMessage.length === 0) {
 
-Jawab pertanyaan user dengan baik dan akurat.
+            return res.status(400).json({
+                success: false,
+                reply: "Pesan kosong."
+            });
 
-Pertanyaan user:
-${userMessage}`;
+        }
 
-        /*  FETCH AI (Pollinations — no API key needed)  */
-        const response = await fetch(
-            `https://text.pollinations.ai/${encodeURIComponent(prompt)}`
+        /*
+        ================================
+        AI PROMPT
+        ================================
+        */
+
+        const prompt = `
+Kamu adalah REVl AI Assistant.
+
+Aturan:
+- Jawab natural
+- Santai
+- Modern
+- Singkat tapi jelas
+- Jangan terlalu formal
+- Tetap membantu dan akurat
+
+Pesan user:
+${cleanMessage}
+`;
+
+        /*
+        ================================
+        FETCH AI RESPONSE
+        ================================
+        */
+
+        const aiResponse = await fetch(
+            `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
+            {
+                method: "GET"
+            }
         );
 
-        if (!response.ok) {
-            return res.status(500).json({ reply: "AI gagal merespon. Coba lagi." });
+        /*
+        ================================
+        HANDLE FAILED RESPONSE
+        ================================
+        */
+
+        if (!aiResponse.ok) {
+
+            console.error("AI RESPONSE ERROR:", aiResponse.status);
+
+            return res.status(500).json({
+                success: false,
+                reply: "AI gagal merespon."
+            });
+
         }
 
-        const aiReply = await response.text();
+        /*
+        ================================
+        GET AI TEXT
+        ================================
+        */
 
-        res.json({ reply: aiReply });
+        const aiText = await aiResponse.text();
 
-    } catch (err) {
-        console.error("SERVER ERROR:", err);
-        res.status(500).json({ reply: "AI server error. Coba beberapa saat lagi." });
+        /*
+        ================================
+        FINAL RESPONSE
+        ================================
+        */
+
+        return res.status(200).json({
+            success: true,
+            reply: aiText
+        });
+
+    } catch (error) {
+
+        console.error("SERVER ERROR:", error);
+
+        return res.status(500).json({
+            success: false,
+            reply: "Terjadi error pada server."
+        });
+
     }
 
 });
 
 /*
 ========================================
-404
+404 ROUTE
 ========================================
 */
 
 app.use((req, res) => {
-    res.status(404).json({ error: "Route tidak ditemukan." });
+
+    res.status(404).json({
+        success: false,
+        error: "Route tidak ditemukan."
+    });
+
 });
 
 /*
@@ -100,5 +182,7 @@ START SERVER
 */
 
 app.listen(PORT, () => {
+
     console.log(`REVl AI Backend running on port ${PORT}`);
+
 });
