@@ -1172,22 +1172,38 @@
 
             try {
 
-                const response = await fetch(
-                    `${BACKEND_URL}/chat`,
-                    {
-                        method: "POST",
+         const controller = new AbortController();
 
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
+const timeout = setTimeout(() => {
+    controller.abort();
+}, 30000);
 
-                        body: JSON.stringify({
-                            message: text
-                        })
-                    }
-                );
+const response = await fetch(
+    `${BACKEND_URL}/chat`,
+    {
+        method: "POST",
 
-                const data = await response.json();
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            message: text
+        }),
+
+        signal: controller.signal
+    }
+);
+
+clearTimeout(timeout);
+
+console.log("STATUS:", response.status);
+
+if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+}
+
+const data = await response.json();
 
                 showTyping(false);
 
