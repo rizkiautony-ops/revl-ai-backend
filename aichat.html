@@ -1208,6 +1208,8 @@
 
                 if (!data.success) {
 
+                    showTyping(false);
+
                     addMessage(
                         data.reply || "AI sedang sibuk.",
                         "ai"
@@ -1221,38 +1223,38 @@
                     "ai"
                 );
 
-           catch (err) {
+            } catch (err) {
 
-                    console.error("FETCH ERROR:", err);
+                console.error("FETCH ERROR:", err);
 
-                    showTyping(false);
+                showTyping(false);
 
-                    let errorMsg =
-                        "**Koneksi ke server gagal.**";
+                let errorMsg =
+                    "**Koneksi ke server gagal.**";
 
-                    if (err.name === "AbortError") {
+                if (err.name === "AbortError") {
 
-                        errorMsg =
-                            "**Request timeout.**\n\nAI terlalu lama merespon.";
-
-                    }
-
-                    addMessage(
-                        errorMsg,
-                        "ai"
-                    );
+                    errorMsg =
+                        "**Request timeout.**\n\nAI terlalu lama merespon.";
 
                 }
 
-            } finally {
-
-                sendBtn.disabled = false;
-
-                inputEl.focus();
+                addMessage(
+                    errorMsg,
+                    "ai"
+                );
 
             }
 
+        } finally {
+
+            sendBtn.disabled = false;
+
+            inputEl.focus();
+
         }
+
+
 
         /* NEW CHAT */
 
