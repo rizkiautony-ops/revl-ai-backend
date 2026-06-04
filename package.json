@@ -1,5 +1,10 @@
 {
-  "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+  "name": "revl-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && npm start"
   }
 }
+

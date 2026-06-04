@@ -1,8 +1,16 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+dotenv.config();
+
 const app = express();
+
+if (!process.env.GEMINI_API_KEY) {
+    console.error("❌ ERROR: GEMINI_API_KEY tidak ditemukan!");
+    process.exit(1);
+}
 
 const genAI = new GoogleGenerativeAI(
     process.env.GEMINI_API_KEY
@@ -156,7 +164,7 @@ ${cleanMessage}
         }, 30000);
 
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash"
+            model: "models/gemini-2.5-flash"
         });
 
         const result = await model.generateContent(prompt);
