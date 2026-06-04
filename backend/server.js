@@ -4,11 +4,7 @@ import fetch from "node-fetch";
 
 const app = express();
 
-/*
-========================================
-CONFIG
-========================================
-*/
+app.set("trust proxy", true);
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,6 +19,14 @@ app.use(cors());
 app.use(express.json({
     limit: "1mb"
 }));
+
+/*
+========================================
+ANTI SPAM
+========================================
+*/
+
+const requestTracker = {};
 
 /*
 ========================================
@@ -42,7 +46,6 @@ app.get("/", (req, res) => {
 /*
 ========================================
 CHAT API
-POST /chat
 ========================================
 */
 
@@ -54,7 +57,7 @@ app.post("/chat", async (req, res) => {
 
         /*
         ================================
-        VALIDATION
+        VALIDASI
         ================================
         */
 
@@ -78,9 +81,45 @@ app.post("/chat", async (req, res) => {
 
         }
 
+        if (cleanMessage.length > 2000) {
+
+            return res.status(400).json({
+                success: false,
+                reply: "Pesan terlalu panjang."
+            });
+
+        }
+
         /*
         ================================
-        AI PROMPT
+        ANTI SPAM 3 DETIK
+        ================================
+        */
+
+        const userIp =
+            req.headers["x-forwarded-for"] ||
+            req.ip ||
+            "unknown";
+
+        const now = Date.now();
+
+        if (
+            requestTracker[userIp] &&
+            now - requestTracker[userIp] < 3000
+        ) {
+
+            return res.status(200).json({
+                success: false,
+                reply: "Tunggu 3 detik sebelum mengirim pesan lagi."
+            });
+
+        }
+
+        requestTracker[userIp] = now;
+
+        /*
+        ================================
+        PROMPT
         ================================
         */
 
@@ -91,9 +130,10 @@ Aturan:
 - Jawab natural
 - Santai
 - Modern
-- Singkat tapi jelas
-- Jangan terlalu formal
-- Tetap membantu dan akurat
+- Jelas
+- Tidak terlalu formal
+- Tetap akurat
+- Gunakan bahasa Indonesia
 
 Pesan user:
 ${cleanMessage}
@@ -101,45 +141,76 @@ ${cleanMessage}
 
         /*
         ================================
-        FETCH AI RESPONSE
+        FETCH AI
         ================================
         */
+
+        const controller = new AbortController();
+
+        const timeout = setTimeout(() => {
+            controller.abort();
+        }, 30000);
 
         const aiResponse = await fetch(
             `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
             {
-                method: "GET"
+                method: "GET",
+                signal: controller.signal
             }
         );
 
+        clearTimeout(timeout);
+
         /*
         ================================
-        HANDLE FAILED RESPONSE
+        HANDLE ERROR STATUS
         ================================
         */
 
         if (!aiResponse.ok) {
 
-            console.error("AI RESPONSE ERROR:", aiResponse.status);
+            console.error(
+                "AI ERROR:",
+                aiResponse.status
+            );
 
-            return res.status(500).json({
+            let msg =
+                "AI sedang sibuk. Coba lagi sebentar.";
+
+            if (aiResponse.status === 429) {
+
+                msg =
+                    "AI sedang ramai digunakan. Tunggu beberapa detik lalu coba lagi.";
+
+            }
+
+            return res.status(200).json({
                 success: false,
-                reply: "AI gagal merespon."
+                reply: msg
             });
 
         }
 
         /*
         ================================
-        GET AI TEXT
+        AMBIL TEXT
         ================================
         */
 
         const aiText = await aiResponse.text();
 
+        if (!aiText || aiText.trim().length === 0) {
+
+            return res.status(200).json({
+                success: false,
+                reply: "AI tidak memberikan jawaban."
+            });
+
+        }
+
         /*
         ================================
-        FINAL RESPONSE
+        SUCCESS
         ================================
         */
 
@@ -152,9 +223,18 @@ ${cleanMessage}
 
         console.error("SERVER ERROR:", error);
 
-        return res.status(500).json({
+        if (error.name === "AbortError") {
+
+            return res.status(200).json({
+                success: false,
+                reply: "AI terlalu lama merespon. Coba lagi."
+            });
+
+        }
+
+        return res.status(200).json({
             success: false,
-            reply: "Terjadi error pada server."
+            reply: "Server sedang mengalami gangguan."
         });
 
     }
@@ -163,7 +243,7 @@ ${cleanMessage}
 
 /*
 ========================================
-404 ROUTE
+404
 ========================================
 */
 
@@ -184,6 +264,8 @@ START SERVER
 
 app.listen(PORT, () => {
 
-    console.log(`REVl AI Backend running on port ${PORT}`);
+    console.log(
+        `REVl AI Backend running on port ${PORT}`
+    );
 
 });
