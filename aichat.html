@@ -1086,6 +1086,8 @@
 
         inputEl.addEventListener("keydown", (e) => {
 
+            console.log("KEY:", e.key);
+
             if (e.key === "Enter" && !e.shiftKey) {
 
                 e.preventDefault();
@@ -1244,13 +1246,13 @@
                     "ai"
                 );
 
+            } finally {
+
+                sendBtn.disabled = false;
+
+                inputEl.focus();
+
             }
-
-        } finally {
-
-            sendBtn.disabled = false;
-
-            inputEl.focus();
 
         }
 
