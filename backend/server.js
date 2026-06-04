@@ -1,8 +1,12 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
+
+const genAI = new GoogleGenerativeAI(
+    process.env.GEMINI_API_KEY
+);
 
 app.set("trust proxy", true);
 
@@ -151,53 +155,13 @@ ${cleanMessage}
             controller.abort();
         }, 30000);
 
-        const aiResponse = await fetch(
-            `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
-            {
-                method: "GET",
-                signal: controller.signal
-            }
-        );
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash"
+        });
 
-        clearTimeout(timeout);
+        const result = await model.generateContent(prompt);
 
-        /*
-        ================================
-        HANDLE ERROR STATUS
-        ================================
-        */
-
-        if (!aiResponse.ok) {
-
-            console.error(
-                "AI ERROR:",
-                aiResponse.status
-            );
-
-            let msg =
-                "AI sedang sibuk. Coba lagi sebentar.";
-
-            if (aiResponse.status === 429) {
-
-                msg =
-                    "AI sedang ramai digunakan. Tunggu beberapa detik lalu coba lagi.";
-
-            }
-
-            return res.status(200).json({
-                success: false,
-                reply: msg
-            });
-
-        }
-
-        /*
-        ================================
-        AMBIL TEXT
-        ================================
-        */
-
-        const aiText = await aiResponse.text();
+        const aiText = result.response.text();
 
         if (!aiText || aiText.trim().length === 0) {
 
@@ -207,7 +171,6 @@ ${cleanMessage}
             });
 
         }
-
         /*
         ================================
         SUCCESS

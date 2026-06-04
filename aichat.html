@@ -1002,8 +1002,6 @@
 
     <script>
 
-        /* CONFIG */
-
         const BACKEND_URL = "https://revlolny.up.railway.app";
 
         /* ELEMENTS */
@@ -1076,17 +1074,9 @@
 
         });
 
-        /* MOBILE KEYBOARD FIX */
-
-        inputEl.addEventListener("focus", () => {
-            setTimeout(scrollBottom, 300);
-        });
-
-        /* ENTER */
+        /* ENTER TO SEND */
 
         inputEl.addEventListener("keydown", (e) => {
-
-            console.log("KEY:", e.key);
 
             if (e.key === "Enter" && !e.shiftKey) {
 
@@ -1100,7 +1090,7 @@
 
         sendBtn.addEventListener("click", sendMessage);
 
-        /* ADD MESSAGE */
+        /* MESSAGE */
 
         function addMessage(content, sender) {
 
@@ -1108,39 +1098,28 @@
 
             msg.className = `message ${sender}`;
 
-            const html =
+            msg.innerHTML =
                 sender === "ai"
                     ? `
-                <div class="avatar">🤖</div>
-
-                <div class="message-box">
-
-                    ${marked.parse(content)}
-
-                    <div class="time">${getTime()}</div>
-
-                </div>
-            `
+            <div class="avatar">🤖</div>
+            <div class="message-box">
+                ${marked.parse(content)}
+                <div class="time">${getTime()}</div>
+            </div>
+        `
                     : `
-                <div class="message-box">
-
-                    ${marked.parse(content)}
-
-                    <div class="time">${getTime()}</div>
-
-                </div>
-
-                <div class="avatar">👤</div>
-            `;
-
-            msg.innerHTML = html;
+            <div class="message-box">
+                ${marked.parse(content)}
+                <div class="time">${getTime()}</div>
+            </div>
+            <div class="avatar">👤</div>
+        `;
 
             messagesEl.appendChild(msg);
 
-            scrollBottom();
-
             saveChat();
 
+            scrollBottom();
         }
 
         /* TYPING */
@@ -1153,7 +1132,7 @@
 
         }
 
-        /* SEND */
+        /* SEND MESSAGE */
 
         async function sendMessage() {
 
@@ -1183,15 +1162,12 @@
                     `${BACKEND_URL}/chat`,
                     {
                         method: "POST",
-
                         headers: {
                             "Content-Type": "application/json"
                         },
-
                         body: JSON.stringify({
                             message: text
                         }),
-
                         signal: controller.signal
                     }
                 );
@@ -1200,20 +1176,16 @@
 
                 console.log("STATUS:", response.status);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
                 const data = await response.json();
+
+                console.log("DATA:", data);
 
                 showTyping(false);
 
-                if (!data.success) {
-
-                    showTyping(false);
+                if (!response.ok) {
 
                     addMessage(
-                        data.reply || "AI sedang sibuk.",
+                        `Server Error (${response.status})`,
                         "ai"
                     );
 
@@ -1221,30 +1193,31 @@
                 }
 
                 addMessage(
-                    data.reply,
+                    data.reply || "AI tidak memberikan respon.",
                     "ai"
                 );
 
             } catch (err) {
 
-                console.error("FETCH ERROR:", err);
+                console.error(err);
 
                 showTyping(false);
 
-                let errorMsg =
-                    "**Koneksi ke server gagal.**";
-
                 if (err.name === "AbortError") {
 
-                    errorMsg =
-                        "**Request timeout.**\n\nAI terlalu lama merespon.";
+                    addMessage(
+                        "**Request timeout**\n\nAI terlalu lama merespon.",
+                        "ai"
+                    );
+
+                } else {
+
+                    addMessage(
+                        "**Koneksi ke backend gagal.**\n\nPeriksa Railway atau API AI yang digunakan.",
+                        "ai"
+                    );
 
                 }
-
-                addMessage(
-                    errorMsg,
-                    "ai"
-                );
 
             } finally {
 
@@ -1253,36 +1226,26 @@
                 inputEl.focus();
 
             }
-
         }
-
-
 
         /* NEW CHAT */
 
         newChatBtn.addEventListener("click", () => {
 
             messagesEl.innerHTML = `
-                <div class="message ai">
-
-                    <div class="avatar">🤖</div>
-
-                    <div class="message-box">
-
-                        <p>Chat baru dimulai.</p>
-
-                        <div class="time">${getTime()}</div>
-
-                    </div>
-
-                </div>
-            `;
+        <div class="message ai">
+            <div class="avatar">🤖</div>
+            <div class="message-box">
+                <p>Chat baru dimulai.</p>
+                <div class="time">${getTime()}</div>
+            </div>
+        </div>
+    `;
 
             saveChat();
-
         });
 
-        /* DELETE */
+        /* DELETE CHAT */
 
         deleteChatBtn.addEventListener("click", () => {
             popupOverlay.classList.add("active");
@@ -1295,9 +1258,7 @@
         popupOverlay.addEventListener("click", (e) => {
 
             if (e.target === popupOverlay) {
-
                 popupOverlay.classList.remove("active");
-
             }
 
         });
@@ -1307,20 +1268,14 @@
             localStorage.removeItem("revl_chat_v2");
 
             messagesEl.innerHTML = `
-                <div class="message ai">
-
-                    <div class="avatar">🤖</div>
-
-                    <div class="message-box">
-
-                        <p>Semua chat dihapus.</p>
-
-                        <div class="time">${getTime()}</div>
-
-                    </div>
-
-                </div>
-            `;
+        <div class="message ai">
+            <div class="avatar">🤖</div>
+            <div class="message-box">
+                <p>Semua chat dihapus.</p>
+                <div class="time">${getTime()}</div>
+            </div>
+        </div>
+    `;
 
             popupOverlay.classList.remove("active");
 
