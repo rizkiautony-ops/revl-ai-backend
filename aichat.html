@@ -1172,59 +1172,78 @@
 
             try {
 
-         const controller = new AbortController();
+                const controller = new AbortController();
 
-const timeout = setTimeout(() => {
-    controller.abort();
-}, 30000);
+                const timeout = setTimeout(() => {
+                    controller.abort();
+                }, 30000);
 
-const response = await fetch(
-    `${BACKEND_URL}/chat`,
-    {
-        method: "POST",
+                const response = await fetch(
+                    `${BACKEND_URL}/chat`,
+                    {
+                        method: "POST",
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
 
-        body: JSON.stringify({
-            message: text
-        }),
+                        body: JSON.stringify({
+                            message: text
+                        }),
 
-        signal: controller.signal
-    }
-);
+                        signal: controller.signal
+                    }
+                );
 
-clearTimeout(timeout);
+                clearTimeout(timeout);
 
-console.log("STATUS:", response.status);
+                console.log("STATUS:", response.status);
 
-if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-}
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
 
-const data = await response.json();
+                const data = await response.json();
 
                 showTyping(false);
 
+                if (!data.success) {
+
+                    addMessage(
+                        data.reply || "AI sedang sibuk.",
+                        "ai"
+                    );
+
+                    return;
+                }
+
                 addMessage(
-                    data.reply || "AI lagi blank.",
+                    data.reply,
                     "ai"
                 );
 
-            } catch (err) {
+           catch (err) {
 
-                console.error(err);
+                    console.error("FETCH ERROR:", err);
 
-                showTyping(false);
+                    showTyping(false);
 
-                addMessage(
-                    `**Koneksi gagal.**
-                    
-Pastikan backend Railway masih hidup.
-Kadang server cloud tidur lebih cepat daripada niat orang belajar coding.`,
-                    "ai"
-                );
+                    let errorMsg =
+                        "**Koneksi ke server gagal.**";
+
+                    if (err.name === "AbortError") {
+
+                        errorMsg =
+                            "**Request timeout.**\n\nAI terlalu lama merespon.";
+
+                    }
+
+                    addMessage(
+                        errorMsg,
+                        "ai"
+                    );
+
+                }
 
             } finally {
 
