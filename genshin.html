@@ -1,169 +1,298 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Links - REVlonly</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REVlonly | Layanan Genshin</title>
+  <link rel="icon" type="image/png" href="logo2.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Genshin page extras */
+    .genshin-hero-img {
+      width: 100%;
+      border-radius: 22px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      position: relative;
+    }
 
-    <link rel="icon" type="image/png" href="logo2.png">
+    .genshin-hero-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(124, 111, 255, .25) 0%, transparent 70%);
+    }
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    .genshin-hero-img .img-placeholder {
+      font-size: 5rem;
+      z-index: 1;
+      position: relative;
+      filter: drop-shadow(0 0 30px rgba(124, 111, 255, .6));
+    }
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; -webkit-user-select: none; overflow-x: hidden; }
-        
-        /* --- ANIMASI MASUK --- */
-        @keyframes slideFromLeftToRight {
-            from { opacity: 0; transform: translateX(-300px) rotate(-5deg); }
-            to { opacity: 1; transform: translateX(0) rotate(2deg); }
-        }
+    .price-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 217, 245, .1);
+      border: 1px solid rgba(56, 217, 245, .25);
+      color: var(--cyan);
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: .85rem;
+      margin-bottom: 10px;
+    }
 
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+    .price-badge .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse-g 2s infinite;
+    }
 
-        /* --- ANIMASI KELUAR (BALIK KE UTAMA) --- */
-        @keyframes slideOutToLeft {
-            from { opacity: 1; transform: translateX(0) rotate(2deg); }
-            to { opacity: 0; transform: translateX(-300px) rotate(-10deg); }
-        }
+    @keyframes pulse-g {
 
-        @keyframes fadeOutScale {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.9); }
-        }
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
 
-        .animate-profile-in { 
-            animation: slideFromLeftToRight 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; 
-        }
-        
-        .animate-menu-in { 
-            animation: fadeInScale 0.8s ease-out 0.2s both; 
-        }
+      50% {
+        opacity: .5;
+        transform: scale(1.4)
+      }
+    }
 
-        /* Class Trigger Balik */
-        .exit-profile-back {
-            animation: slideOutToLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-        }
+    .package-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 2rem;
+    }
 
-        .exit-menu-back {
-            animation: fadeOutScale 0.5s ease-in forwards;
-        }
+    .pkg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all .4s cubic-bezier(.34, 1.56, .64, 1);
+    }
 
-        .btn-clean {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-        .btn-clean:hover {
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
-        }
-    </style>
+    .pkg-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .pkg-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(124, 111, 255, .4);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+    }
+
+    .pkg-card:hover::before {
+      opacity: 1;
+    }
+
+    .pkg-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .pkg-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    .pkg-desc {
+      color: var(--muted);
+      font-size: .875rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .pkg-price {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--cyan);
+    }
+
+    .pkg-price span {
+      font-size: .8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .highlight-card {
+      background: linear-gradient(135deg, rgba(124, 111, 255, .1), rgba(56, 217, 245, .06));
+      border: 1px solid rgba(124, 111, 255, .25);
+    }
+  </style>
 </head>
 
-<body class="bg-gradient-to-br from-white via-slate-100 to-sky-200 min-h-screen flex items-center justify-center p-4 md:p-10 relative overflow-x-hidden">
+<body>
+  <div class="page-shell">
+    <nav class="topbar container" id="navbar">
+      <a class="brand" href="index.html">
+        <div class="brand-icon"><img src="logo2.png" alt="Logo"
+            onerror="this.parentElement.innerHTML='<span class=brand-icon-fallback>R</span>'" /></div>
+        REVlonly
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Beranda</a>
+        <a href="genshin.html" style="color:var(--text)">Genshin</a>
+        <a href="pricelist.html">Harga</a>
+        <a href="aichat.html" class="btn btn-primary" style="min-height:38px;padding:0 18px;font-size:.85rem">AI Chat
+          ✦</a>
+      </div>
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    </nav>
 
-    <div class="absolute top-0 left-0 w-64 h-64 bg-sky-300/20 rounded-full blur-[100px] -z-10"></div>
-    <div class="absolute bottom-0 right-0 w-80 h-80 bg-blue-400/20 rounded-full blur-[120px] -z-10"></div>
-
-    <div class="relative bg-white/70 backdrop-blur-xl w-full max-w-5xl min-h-[550px] md:h-auto rounded-[2.5rem] shadow-2xl flex flex-col-reverse md:flex-row overflow-hidden border border-white/50">
-
-        <div id="menu-container" class="w-full md:w-[60%] p-6 md:p-12 flex flex-col justify-center space-y-4 animate-menu-in">
-            
-            <div class="mb-4 text-center">
-                <h2 class="text-2xl font-black text-slate-800 tracking-tight">Quick Menu</h2>
-                <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mt-1">Professional Services</p>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4 w-full">
-                <a href="https://wa.me/6283191158298?text=Halooo%20saya%20mau%20order%20joki%20Min"
-                    class="btn-clean flex items-center justify-center w-full px-6 py-4 rounded-2xl text-sky-500 font-extrabold hover:bg-sky-500 hover:text-white hover:scale-[1.02] active:scale-95 transition-all duration-300">
-                    Order Joki
-                </a>
-
-                <a href="pricelist.html"
-                    class="btn-clean flex items-center justify-center w-full px-6 py-4 rounded-2xl text-sky-500 font-extrabold hover:bg-sky-500 hover:text-white hover:scale-[1.02] active:scale-95 transition-all duration-300">
-                    Price List Joki
-                </a>
-
-                <a href="https://www.tiktok.com/@kocheng_212?_r=1&_t=ZS-9542EhKgaxh"
-                    class="btn-clean flex items-center justify-center w-full px-6 py-4 rounded-2xl text-sky-500 font-extrabold hover:bg-sky-500 hover:text-white hover:scale-[1.02] active:scale-95 transition-all duration-300">
-                    TikTok
-                </a>
-
-                <a href="https://www.instagram.com/mch_r_a_a?igsh=cGM4jlmbWJ0YjQ4"
-                    class="btn-clean flex items-center justify-center w-full px-6 py-4 rounded-2xl text-sky-500 font-extrabold hover:bg-sky-500 hover:text-white hover:scale-[1.02] active:scale-95 transition-all duration-300">
-                    Instagram
-                </a>
-
-                <a href="index.html" id="back-to-main"
-                    class="flex items-center justify-center w-full px-6 py-4 rounded-2xl bg-slate-800 text-white font-extrabold hover:bg-slate-900 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-xl mt-4">
-                    Kembali ke Menu Utama
-                </a>
-            </div>
+    <main class="container">
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-copy reveal">
+          <small>Genshin Impact Service</small>
+          <h1>Joki Genshin Impact Aman & Terpercaya</h1>
+          <p>Layanan joki profesional untuk naik AR, push log boss mingguan, event harian, dan lebih banyak lagi —
+            dengan keamanan akun sebagai prioritas utama.</p>
+          <div class="hero-actions">
+            <a href="https://wa.me/6283191158298?text=Halo%20REVlonly%2C%20saya%20butuh%20layanan%20Genshin"
+              class="btn btn-primary" target="_blank">Pesan Sekarang →</a>
+            <a href="pricelist.html" class="btn btn-secondary">Lihat Harga</a>
+          </div>
         </div>
-
-        <div id="profile-container" class="w-full md:w-[40%] bg-white/50 flex flex-col items-center justify-center p-8 border-t md:border-t-0 md:border-l border-white/60 animate-profile-in">
-            <div class="relative group">
-                <div class="absolute inset-0 bg-sky-400 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                <div class="relative w-32 h-32 md:w-48 md:h-48 rounded-[2rem] border-4 border-white shadow-2xl overflow-hidden rotate-2 group-hover:rotate-0 transition-all duration-500">
-                    <img src="rem.png" alt="REVlonly Profile" class="w-full h-full object-cover">
-                </div>
-            </div>
-
-            <div class="mt-8 text-center">
-                <img src="logo.png" alt="REVlonly Logo" class="h-12 w-auto object-contain mx-auto drop-shadow-md">
-                <div class="h-1.5 w-12 bg-sky-500 mx-auto mt-4 rounded-full"></div>
-                
-                <p class="mt-4 text-sky-600 font-extrabold text-[11px] tracking-[0.2em] uppercase italic px-4">
-                    | Welcome to Gabut Impact |
-                </p>
-                
-                <div class="mt-3 px-6">
-                    <p class="text-slate-500 text-[12px] font-medium leading-relaxed">
-                        Lagi nyari joki yang terpercaya?<br>
-                        <span class="text-slate-600 font-bold">Keamanan akun terjamin 100%!</span>
-                    </p>
-                </div>
-            </div>
-            
-            <p class="text-[9px] text-slate-400 uppercase tracking-[0.4em] text-center pt-8 font-bold hidden md:block">© REVlonly 2026</p>
+        <div class="genshin-hero-img reveal reveal-1">
+          <div class="img-placeholder">⚔️</div>
+          <div style="position:absolute;bottom:20px;left:20px;right:20px;z-index:2">
+            <div class="price-badge"><span class="dot"></span>Mulai Rp 25.000</div>
+          </div>
         </div>
+      </section>
 
-    </div>
+      <!-- PACKAGES -->
+      <section class="section">
+        <div class="section-title reveal">
+          <span class="section-label">Paket Layanan</span>
+          <h2>Pilih paket yang sesuai kebutuhanmu</h2>
+        </div>
+        <div class="package-grid">
+          <article class="pkg-card highlight-card reveal reveal-1">
+            <span class="pkg-icon">🗺️</span>
+            <div class="pkg-name">Paket AR Boost</div>
+            <p class="pkg-desc">Naik Adventure Rank dengan cepat dan aman. Cocok untuk pemain yang ingin melanjutkan
+              konten story atau Spiral Abyss.</p>
+            <div class="pkg-price">Rp 25.000<span>/sesi</span></div>
+          </article>
+          <article class="pkg-card reveal reveal-2">
+            <span class="pkg-icon">👾</span>
+            <div class="pkg-name">Paket Weekly Boss</div>
+            <p class="pkg-desc">Push log boss mingguan untuk material upgrade karakter favoritmu secara efisien dan
+              tanpa repot.</p>
+            <div class="pkg-price">Rp 40.000<span>/minggu</span></div>
+          </article>
+          <article class="pkg-card reveal reveal-3">
+            <span class="pkg-icon">🎯</span>
+            <div class="pkg-name">Paket Daily & Event</div>
+            <p class="pkg-desc">Optimalkan progress harian, commission, dan event terbatas agar reward tidak terlewat
+              satu pun.</p>
+            <div class="pkg-price">Hubungi<span> untuk harga</span></div>
+          </article>
+        </div>
+      </section>
 
-    <script>
-        // --- LOGIC ANIMASI BALIK KE UTAMA ---
-        const btnBack = document.getElementById('back-to-main');
-        const profileContainer = document.getElementById('profile-container');
-        const menuContainer = document.getElementById('menu-container');
+      <!-- WHY US -->
+      <section class="section">
+        <div class="section-title reveal">
+          <span class="section-label">Mengapa pilih kami?</span>
+          <h2>Transparansi, keamanan, dan respon cepat.</h2>
+        </div>
+        <div class="feature-list">
+          <article class="feature-card reveal reveal-1">
+            <span>01</span>
+            <div>
+              <h4>Keamanan akun terjamin</h4>
+              <p>Privasi dan keamanan akun dijaga ketat selama proses joki berlangsung. Tidak ada sharing password ke
+                pihak lain.</p>
+            </div>
+          </article>
+          <article class="feature-card reveal reveal-2">
+            <span>02</span>
+            <div>
+              <h4>Pelayanan cepat & update real-time</h4>
+              <p>Tim kami memberikan laporan progress secara langsung lewat WhatsApp agar kamu selalu tau
+                perkembangannya.</p>
+            </div>
+          </article>
+          <article class="feature-card reveal reveal-3">
+            <span>03</span>
+            <div>
+              <h4>Komunikasi mudah 24 jam</h4>
+              <p>Bisa langsung chat WhatsApp kapan saja untuk konsultasi, tanya harga, atau konfirmasi order dengan
+                respon cepat.</p>
+            </div>
+          </article>
+        </div>
+      </section>
 
-        btnBack.addEventListener('click', function(e) {
-            e.preventDefault();
-            const destination = this.href;
+      <!-- CTA -->
+      <section class="section cta-panel">
+        <div class="cta-box reveal">
+          <h2>Siap tingkatkan progress Genshin-mu?</h2>
+          <p>Hubungi REVlonly sekarang lewat WhatsApp untuk konsultasi paket dan jadwal mulai joki.</p>
+          <div class="hero-actions">
+            <a href="https://wa.me/6283191158298?text=Halo%20REVlonly%2C%20saya%20ingin%20pesan%20joki%20Genshin"
+              class="btn btn-primary" target="_blank">Hubungi WhatsApp →</a>
+            <a href="pricelist.html" class="btn btn-secondary">Cek Harga</a>
+          </div>
+        </div>
+      </section>
+    </main>
 
-            // Jalankan animasi keluar (Geser balik ke kiri)
-            profileContainer.classList.remove('animate-profile-in');
-            profileContainer.classList.add('exit-profile-back');
-            menuContainer.classList.add('exit-menu-back');
+    <footer class="footer container">REVlonly © 2026 — Joki Genshin dengan layanan modern dan mudah.</footer>
+  </div>
 
-            // Delay pindah halaman sampai animasi selesai
-            setTimeout(() => {
-                window.location.href = destination;
-            }, 700);
-        });
+  <script>
+    // Scroll nav
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60), { passive: true });
 
-        // Security shortcuts
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'i' || (e.shiftKey && e.key === 'I'))) {
-                e.preventDefault();
-            }
-        });
-    </script>
+    // Hamburger
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Reveal observer
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: .1, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
 </body>
+
 </html>

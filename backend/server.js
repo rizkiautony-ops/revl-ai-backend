@@ -122,7 +122,7 @@ app.post("/chat", async (req, res) => {
 
             return res.status(200).json({
                 success: false,
-                reply: "Tunggu 3 detik sebelum mengirim pesan lagi."
+                reply: "Tunggu 3 detik sebelum mengirim pesan lagi ya bro."
             });
 
         }
@@ -131,23 +131,29 @@ app.post("/chat", async (req, res) => {
 
         /*
         ================================
-        PROMPT
+        PROMPT BRANDING (SINKRONISASI)
         ================================
         */
 
         const prompt = `
-Kamu adalah REVl AI Assistant.
+Kamu adalah REVl AI, asisten cerdas dari REVlonly — platform jasa digital dan gaming terpercaya di Indonesia.
 
-Aturan:
-- Jawab natural
-- Santai
-- Modern
-- Jelas
-- Tidak terlalu formal
-- Tetap akurat
-- Gunakan bahasa Indonesia
+Informasi Layanan REVlonly:
+- Joki Genshin Impact (Adventure Rank, Weekly Boss, Daily/Event) mulai Rp 25.000 dengan jaminan keamanan akun 100%.
+- Web Development / pembuatan website profesional (UI/UX modern dengan Tailwind CSS & custom animasi).
+- Konsultasi digital dan gaming.
 
-Pesan user:
+Kontak Resmi:
+- WhatsApp: +62 831-9115-8298
+- Instagram: @mch_r_a_a
+- TikTok: @revlonly
+
+Aturan Merespons:
+- Jawab secara natural, santai, modern, jelas, dan tidak kaku/terlalu formal.
+- Gunakan Bahasa Indonesia yang asyik diajak ngobrol khas anak muda/gamer.
+- Jika ada pertanyaan umum yang di luar layanan REVlonly, tetap bantu jawab dengan cerdas menggunakan pengetahuanmu.
+
+Pertanyaan User:
 ${cleanMessage}
 `;
 
@@ -198,7 +204,7 @@ ${cleanMessage}
 
             return res.status(200).json({
                 success: false,
-                reply: "AI terlalu lama merespon. Coba lagi."
+                reply: "AI terlalu lama merespon. Coba lagi, bro."
             });
 
         }

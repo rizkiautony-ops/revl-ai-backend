@@ -2,83 +2,355 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price List - REVlonly</title>
-    <link rel="icon" type="image/png" href="logo2.png">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Price List — REVlonly</title>
+    <link rel="icon" type="image/png" href="logo2.png" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
-            color: #f8fafc;
-            min-height: 100vh;
+        .price-page {
+            padding: clamp(3rem, 6vw, 5rem) 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: clamp(2.5rem, 5vw, 4rem);
+        }
+
+        .page-header h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            margin: 14px 0 10px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .price-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            position: relative;
+            overflow: hidden;
+            transition: all .4s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        .price-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--cyan));
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .price-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(124, 111, 255, .35);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+        }
+
+        .price-card:hover::before {
+            opacity: 1;
+        }
+
+        .price-card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .price-card-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+        }
+
+        .price-card-sub {
+            color: var(--muted);
+            font-size: .875rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 16px;
+            background: rgba(255, 255, 255, .04);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .price-item:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .price-item-label {
+            font-size: .9rem;
+            color: var(--text);
+        }
+
+        .price-item-desc {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .price-item-amount {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--cyan);
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .contact-card {
+            background: linear-gradient(135deg, rgba(124, 111, 255, .1), rgba(56, 217, 245, .06));
+            border: 1px solid rgba(124, 111, 255, .25);
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 12px;
+            transition: all .25s;
+        }
+
+        .contact-row:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .contact-row:hover {
+            border-color: var(--border2);
+            background: rgba(255, 255, 255, .09);
+        }
+
+        .contact-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .contact-label {
+            font-size: .78rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        .contact-val {
+            font-weight: 700;
+            font-size: .95rem;
+        }
+
+        .note-box {
+            background: rgba(56, 217, 245, .07);
+            border: 1px solid rgba(56, 217, 245, .2);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-top: 20px;
+        }
+
+        .note-box p {
+            color: rgba(56, 217, 245, .85);
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .note-box ul {
+            list-style: disc;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: .85rem;
+            line-height: 1.8;
+        }
+
+        .back-btn-wrap {
+            text-align: center;
+            margin-top: clamp(2rem, 4vw, 3rem);
+        }
+
+        @media(max-width:600px) {
+            .price-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .price-item-amount {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 
-<body class="relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-sky-500/20 via-transparent to-slate-950/80 pointer-events-none"></div>
-    <div class="relative mx-auto flex min-h-screen max-w-5xl flex-col p-6 md:p-10">
-        <header class="mb-8 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-xl">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-sm uppercase tracking-[0.35em] text-cyan-300/80">REVlonly</p>
-                    <h1 class="mt-3 text-4xl font-black text-white">Price List</h1>
-                </div>
-                <a href="index.html" class="rounded-3xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:bg-sky-400">
-                    Kembali</a>
+<body>
+    <div class="page-shell">
+        <nav class="topbar container" id="navbar">
+            <a class="brand" href="index.html">
+                <div class="brand-icon"><img src="logo2.png" alt="Logo"
+                        onerror="this.parentElement.innerHTML='<span class=brand-icon-fallback>R</span>'" /></div>
+                REVlonly
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Beranda</a>
+                <a href="genshin.html">Genshin</a>
+                <a href="pricelist.html" style="color:var(--text)">Harga</a>
+                <a href="aichat.html" class="btn btn-primary" style="min-height:38px;padding:0 18px;font-size:.85rem">AI
+                    Chat ✦</a>
             </div>
-            <p class="max-w-2xl text-sm text-slate-300">Silakan lihat daftar harga layanan REVlonly. Hubungi kami lewat WhatsApp untuk konfirmasi dan pemesanan.</p>
-        </header>
+            <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        </nav>
 
-        <main class="grid gap-6 lg:grid-cols-2">
-            <section class="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
-                <h2 class="text-2xl font-semibold text-white">Layanan Genshin</h2>
-                <p class="mt-3 text-sm text-slate-400">Layanan joki Genshin Impact dengan harga yang kompetitif dan aman.</p>
-                <div class="mt-8 space-y-4">
-                    <div class="rounded-3xl bg-slate-950/70 p-5">
-                        <p class="font-semibold text-slate-100">Joki AR/Adventure Rank</p>
-                        <p class="mt-2 text-sm text-slate-400">Mulai dari</p>
-                        <p class="mt-3 text-3xl font-bold text-cyan-300">Rp 25.000</p>
+        <main class="container price-page">
+            <header class="page-header reveal">
+                <span class="section-label">REVlonly</span>
+                <h1>Daftar Harga Layanan</h1>
+                <p>Harga transparan dan kompetitif. Hubungi kami via WhatsApp untuk konfirmasi dan pemesanan.</p>
+            </header>
+
+            <div class="price-grid">
+                <!-- GENSHIN PRICES -->
+                <div class="price-card reveal">
+                    <span class="price-card-icon">⚔️</span>
+                    <div class="price-card-name">Layanan Genshin Impact</div>
+                    <p class="price-card-sub">Joki profesional dengan keamanan akun prioritas utama dan update
+                        real-time.</p>
+
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Joki AR / Adventure Rank</div>
+                            <div class="price-item-desc">Naik AR dengan cepat dan aman</div>
+                        </div>
+                        <div class="price-item-amount">Rp 25.000</div>
                     </div>
-                    <div class="rounded-3xl bg-slate-950/70 p-5">
-                        <p class="font-semibold text-slate-100">Push Log/Weekly Boss</p>
-                        <p class="mt-2 text-sm text-slate-400">Mulai dari</p>
-                        <p class="mt-3 text-3xl font-bold text-violet-300">Rp 40.000</p>
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Push Log / Weekly Boss</div>
+                            <div class="price-item-desc">Boss mingguan untuk material karakter</div>
+                        </div>
+                        <div class="price-item-amount">Rp 40.000</div>
+                    </div>
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Daily & Event Support</div>
+                            <div class="price-item-desc">Commission harian & event terbatas</div>
+                        </div>
+                        <div class="price-item-amount">Nego</div>
                     </div>
                 </div>
-            </section>
 
-            <section class="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
-                <h2 class="text-2xl font-semibold text-white">Kontak & Catatan</h2>
-                <p class="mt-3 text-sm text-slate-400">Semua pesanan bisa langsung dikonfirmasi lewat WhatsApp atau Instagram.</p>
-                <div class="mt-8 space-y-5 text-slate-300">
-                    <div>
-                        <p class="text-sm uppercase tracking-[0.25em] text-slate-500">WhatsApp</p>
-                        <p class="mt-2 text-lg font-semibold text-white">+62 831-9115-8298</p>
+                <!-- WEB DEV PRICES -->
+                <div class="price-card reveal reveal-1">
+                    <span class="price-card-icon">💻</span>
+                    <div class="price-card-name">Web Development</div>
+                    <p class="price-card-sub">Pembuatan website profesional dengan desain modern, responsif, dan
+                        performa optimal.</p>
+
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Landing Page</div>
+                            <div class="price-item-desc">1 halaman, desain modern</div>
+                        </div>
+                        <div class="price-item-amount">Hubungi</div>
                     </div>
-                    <div>
-                        <p class="text-sm uppercase tracking-[0.25em] text-slate-500">Instagram</p>
-                        <p class="mt-2 text-lg font-semibold text-white">@mch_r_a_a</p>
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Company Profile</div>
+                            <div class="price-item-desc">Multi-halaman, SEO dasar</div>
+                        </div>
+                        <div class="price-item-amount">Hubungi</div>
                     </div>
-                    <div class="rounded-3xl border border-sky-500/20 bg-sky-500/10 p-5">
-                        <p class="text-sm text-sky-200">Catatan penting:</p>
-                        <ul class="mt-3 list-disc space-y-2 pl-5 text-slate-300">
-                            <li>Pembayaran langsung dikonfirmasi setelah order diterima.</li>
-                            <li>Pastikan keamanan akun tetap terjaga.</li>
-                            <li>Estimasi selesai tergantung request dan server.</li>
+                    <div class="price-item">
+                        <div>
+                            <div class="price-item-label">Custom Web App</div>
+                            <div class="price-item-desc">Fitur khusus, diskusi kebutuhan dulu</div>
+                        </div>
+                        <div class="price-item-amount">Nego</div>
+                    </div>
+                </div>
+
+                <!-- CONTACT CARD -->
+                <div class="price-card contact-card reveal reveal-2">
+                    <span class="price-card-icon">📬</span>
+                    <div class="price-card-name">Kontak & Pemesanan</div>
+                    <p class="price-card-sub">Semua pesanan dikonfirmasi langsung via WhatsApp atau Instagram.</p>
+
+                    <a href="https://wa.me/6283191158298" target="_blank" class="contact-row"
+                        style="text-decoration:none">
+                        <span class="contact-icon">💬</span>
+                        <div>
+                            <div class="contact-label">WhatsApp</div>
+                            <div class="contact-val">+62 831-9115-8298</div>
+                        </div>
+                    </a>
+                    <a href="https://instagram.com/mch_r_a_a" target="_blank" class="contact-row"
+                        style="text-decoration:none">
+                        <span class="contact-icon">📸</span>
+                        <div>
+                            <div class="contact-label">Instagram</div>
+                            <div class="contact-val">@mch_r_a_a</div>
+                        </div>
+                    </a>
+
+                    <div class="note-box">
+                        <p>⚠️ Catatan penting:</p>
+                        <ul>
+                            <li>Pembayaran dikonfirmasi setelah order diterima.</li>
+                            <li>Keamanan akun dijaga selama layanan berlangsung.</li>
+                            <li>Estimasi selesai tergantung request dan kondisi server.</li>
+                            <li>Harga dapat berubah sewaktu-waktu.</li>
                         </ul>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <div class="back-btn-wrap reveal">
+                <a href="index.html" class="btn btn-secondary">← Kembali ke Beranda</a>
+            </div>
         </main>
 
-        <footer class="mt-auto rounded-[2rem] border border-white/10 bg-slate-900/80 p-6 text-center text-sm text-slate-400 shadow-inner shadow-slate-950/25">
-            © REVlonly 2026 — Harga dapat berubah tanpa pemberitahuan.
-        </footer>
+        <footer class="footer container">© REVlonly 2026 — Harga dapat berubah tanpa pemberitahuan.</footer>
     </div>
+
+    <script>
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60), { passive: true });
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: .08, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    </script>
 </body>
 
 </html>
